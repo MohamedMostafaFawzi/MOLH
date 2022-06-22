@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import GooglePlaces
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, GMSAutocompleteViewControllerDelegate {
     @IBOutlet weak var programmaticallylocalizedLabel: UILabel!
     @IBOutlet var labelWithFont: MOLHFontLocalizableLabel!
     @IBOutlet var textField: TextView!
@@ -71,6 +72,35 @@ class ViewController: UIViewController {
         sender.resignFirstResponder()
     }
     
+    @IBAction func goToGMSAutocompleteViewController(_ sender: Any) {
+        let autocompleteController = GMSAutocompleteViewController()
+        autocompleteController.delegate = self
+        let fields: GMSPlaceField = GMSPlaceField(
+            rawValue: UInt(
+                GMSPlaceField.name.rawValue
+            ) | UInt(
+                GMSPlaceField.placeID.rawValue
+            )
+        )
+        autocompleteController.placeFields = fields
+        let filter = GMSAutocompleteFilter()
+        filter.type = .address
+        autocompleteController.autocompleteFilter = filter
+
+        present(autocompleteController, animated: true, completion: nil)
+    }
+    
+    func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+        print("did finish picking the address")
+    }
+    
+    func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+        print("Error: ", error.localizedDescription)
+    }
+    
+    func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+        dismiss(animated: true, completion: nil)
+    }
     
     
     
